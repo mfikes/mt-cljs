@@ -19,7 +19,7 @@ Then evaluate these forms
 
 ```clojure
 (require '[mt-cljs.cas-atom :as cas-atom]
-         '[mt-cljs.thread :as thread :refer [sleep start]])
+         '[mt-cljs.thread :refer [Thread] :as Thread])
 
 (def initial-value {:v 0
                     :a {:v 0
@@ -33,11 +33,11 @@ Then evaluate these forms
 
 (defn worker []
   (swap! a update-in (concat (take (rand-int 7) [:a :b :c :d :e :f]) [:v]) inc)
-  (sleep 10)
+  (Thread/sleep 10)
   (recur))
   
 (dotimes [_ 200]
-  (start (thread/create worker)))
+  (.start (Thread. worker)))
 ```
 
 This will start up a couple hundred threads `swap!`ing on a CAS-based atom.
